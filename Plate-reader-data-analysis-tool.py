@@ -1,4 +1,6 @@
 import pandas as pd
+from pandas.api.types import is_string_dtype
+from pandas.api.types import is_numeric_dtype
 import sys
 
 # Read the entire file into a DataFrame
@@ -57,4 +59,28 @@ def identify_peripheral_water():
 peripheral_water = identify_peripheral_water()
 
 cleaned_data = cleaned_data.drop(index = peripheral_water)
-print(cleaned_data)
+print(cleaned_data.head())
+
+
+# Check if data are of correct data type
+def correct_dtype(df):
+    col_to_check = df.columns.tolist()
+
+    for col in col_to_check:
+        if col != "Group":
+            if not is_numeric_dtype(df[col]):
+                try:
+                    # First try converting directly to float
+                    df[col] = df[col].astype(float)
+                except ValueError as e:
+                    # Replace non-numeric values with Nan
+                    pd.to_numeric(df[col], errors="coerce")
+    return df
+
+correct_dtype(cleaned_data)
+
+                
+
+# Check if all cells in DataFrame contain data (it should)
+if cleaned_data.isna().any(axis=None) == True:
+    print("Missing data")

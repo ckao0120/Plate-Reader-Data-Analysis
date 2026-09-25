@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
@@ -96,8 +97,18 @@ def check_GroupID(df):
             
 cleaned_data = check_GroupID(cleaned_data)
 
-print(cleaned_data)
 
 # Check if all cells in DataFrame contain data (it should)
-if cleaned_data.isna().any(axis=None) == True:
-    print("Missing data")
+def check_missing_data(df):
+    col_to_check = df.columns.tolist()
+
+    for col in col_to_check:
+        # Check for NaN values
+        nan_count = df[col].isna().sum()
+        nan_idx = df.index[df[col].isna()].tolist()
+
+        if nan_count > 0:
+            print(f"Warning: {col} has {nan_count} missing values.")
+            print(f"Missing values in wells: {nan_idx}")
+
+check_missing_data(cleaned_data)

@@ -77,9 +77,26 @@ def correct_dtype(df):
                     pd.to_numeric(df[col], errors="coerce")
     return df
 
-correct_dtype(cleaned_data)
+cleaned_data = correct_dtype(cleaned_data)
 
-                
+
+# Check that Group column has sensible Group IDs
+def check_GroupID(df):
+    IDs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
+          "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+          "U", "V", "X", "Y", "Z"]
+
+    sample_IDs = df["Group"].values.tolist()
+
+    for i in range(len(sample_IDs)):
+        if df.iat[i, 0] not in IDs:
+            df.iat[i, 0] = np.nan
+
+    return df 
+            
+cleaned_data = check_GroupID(cleaned_data)
+
+print(cleaned_data)
 
 # Check if all cells in DataFrame contain data (it should)
 if cleaned_data.isna().any(axis=None) == True:

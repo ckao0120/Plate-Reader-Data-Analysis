@@ -60,7 +60,6 @@ def identify_peripheral_water():
 peripheral_water = identify_peripheral_water()
 
 cleaned_data = cleaned_data.drop(index = peripheral_water)
-print(cleaned_data.head())
 
 
 # Check if data are of correct data type
@@ -112,3 +111,16 @@ def check_missing_data(df):
             print(f"Missing values in wells: {nan_idx}")
 
 check_missing_data(cleaned_data)
+
+print(cleaned_data.head())
+
+# Identify wells with blanks for normalising absorbance of samples
+# Blanks in Rows E, F, G by experimental design
+def identify_blanks(df, rows, columns):
+    blanks = []
+    for row in rows:
+        for col in columns:
+            well = row + str(f"{col:02d}")
+            blanks.append(well)
+
+# Subtract absorbance of blanks from sample absorbance

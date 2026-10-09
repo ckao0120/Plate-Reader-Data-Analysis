@@ -131,12 +131,14 @@ check_missing_data(cleaned_data)
 print(cleaned_data.head())
 
 # Identify wells with blanks for normalising absorbance of samples
-# Blanks in Rows E, F, G by experimental design
 def identify_blanks(df, rows, columns):
     blanks = []
     for row in rows:
         for col in columns:
             well = row + str(f"{col:02d}")
             blanks.append(well)
+    return blanks
 
+
+# Calculate 
 # Subtract absorbance of blanks from sample absorbance

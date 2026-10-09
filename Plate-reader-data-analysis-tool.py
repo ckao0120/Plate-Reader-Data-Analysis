@@ -4,6 +4,22 @@ from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
 import sys
 
+#####
+# MICROPLATE INFO
+# Peripheral wells filled with water to avoid edge effect
+
+# Rows with samples
+sample_row = ["B", "C", "D"]
+# Columns with samples
+sample_col = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+# Rows with blanks
+blank_row = ["E", "F", "G"]
+# Columns with blanks
+blank_col = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+######
+
 # Read the entire file into a DataFrame
 all_data = pd.read_csv(sys.argv[1], header=None)
 

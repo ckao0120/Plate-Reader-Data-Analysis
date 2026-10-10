@@ -141,9 +141,8 @@ def identify_blanks(df, rows, columns):
 
 # Calculate average of the absorbance values of blanks
 def calculate_blank_average(df, blanks):
-    blank_replicates = {}
-
     # Calculate the number of replicates per sample blank
+    blank_replicates = {}
     for well in blanks:
         if well[1:] not in blank_replicates:
             blank_replicates[well[1:]] = 1
@@ -152,6 +151,10 @@ def calculate_blank_average(df, blanks):
 
     # Subset dataframe with just the sample blanks
     blank_abs = df.loc[blanks]
+
+    # Calculate the average
+
+    
     return blank_abs
 
 print(calculate_blank_average(cleaned_data, identify_blanks(cleaned_data, blank_row, blank_col)))

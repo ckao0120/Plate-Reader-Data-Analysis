@@ -40,14 +40,14 @@ absorbance_data.iat[0, 2] = "Group"
 
 print(absorbance_data.head())
 
-# Rename rows to oolumn 1
+# Rename rows to column 1
 absorbance_data.set_index("Well", inplace=True)
 
 print(absorbance_data.head())
 
 # Delete Blank corrected raw data as it was calculated 
 # based on the absorbance of the peripheral water
-cleaned_data = absorbance_data.drop(columns = ["Blank corrected based on Raw Data (600)", "Content"])
+cleaned_data = absorbance_data.drop(columns = ["Group", "Blank corrected based on Raw Data (600)", "Content"])
 #print(cleaned_data.head())
 
 # Rename column names to row 1 (containing time)
@@ -97,20 +97,20 @@ cleaned_data = correct_dtype(cleaned_data)
 
 
 # Check that Group column has sensible Group IDs
-def check_GroupID(df):
-    IDs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
-          "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-          "U", "V", "X", "Y", "Z"]
+#def check_GroupID(df):
+#    IDs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
+#          "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+#          "U", "V", "X", "Y", "Z"]
 
-    sample_IDs = df["Group"].values.tolist()
+#    sample_IDs = df["Group"].values.tolist()
 
-    for i in range(len(sample_IDs)):
-        if df.iat[i, 0] not in IDs:
-            df.iat[i, 0] = np.nan
+#    for i in range(len(sample_IDs)):
+#        if df.iat[i, 0] not in IDs:
+#            df.iat[i, 0] = np.nan
 
-    return df 
+#    return df 
             
-cleaned_data = check_GroupID(cleaned_data)
+# cleaned_data = check_GroupID(cleaned_data)
 
 
 # Check if all cells in DataFrame contain data (it should)
@@ -139,23 +139,34 @@ def identify_blanks(df, rows, columns):
             blanks.append(well)
     return blanks
 
-# Calculate average of the absorbance values of blanks
-def calculate_blank_average(df, blanks):
-    # Calculate the number of replicates per sample blank
-    blank_replicates = {}
-    for well in blanks:
-        if well[1:] not in blank_replicates:
-            blank_replicates[well[1:]] = 1
-        else:
-            blank_replicates[well[1:]] += 1
 
+# Calculate average of the absorbance values of blanks
+def calculate_blank_average(df, blanks, rows, columns):
     # Subset dataframe with just the sample blanks
     blank_abs = df.loc[blanks]
 
-    # Calculate the average
+    averages = {}
 
-    
-    return blank_abs
+    for col in columns:
+        # Get column IDs
+        wells = []
+        for row in rows:
+            col_ID = str(f"{col:02d}")
+            well = row + col_ID
+            wells.append(well)
+        
+        # Subset replicates for each sample blank
+        blank_rep = df.loc[wells]
 
-print(calculate_blank_average(cleaned_data, identify_blanks(cleaned_data, blank_row, blank_col)))
+        # Calculate aveage of each column
+        average = blank_rep.mean().to_dict()
+
+        # Append averages to a dictionary
+        averages[col_ID] = average
+
+    return averages
+
+print(calculate_blank_average(cleaned_data, identify_blanks(cleaned_data, blank_row, blank_col), blank_row, blank_col))
+
+
 # Subtract absorbance of blanks from sample absorbance

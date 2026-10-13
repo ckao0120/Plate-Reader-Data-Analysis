@@ -130,21 +130,9 @@ check_missing_data(cleaned_data)
 
 print(cleaned_data.head())
 
-# Identify wells with blanks for normalising absorbance of samples
-def identify_blanks(df, rows, columns):
-    blanks = []
-    for col in columns:
-        for row in rows:
-            well = row + str(f"{col:02d}")
-            blanks.append(well)
-    return blanks
-
 
 # Calculate average of the absorbance values of blanks
-def calculate_blank_average(df, blanks, rows, columns):
-    # Subset dataframe with just the sample blanks
-    blank_abs = df.loc[blanks]
-
+def calculate_blank_average(df, rows, columns):
     averages = {}
 
     for col in columns:
@@ -166,7 +154,7 @@ def calculate_blank_average(df, blanks, rows, columns):
 
     return averages
 
-print(calculate_blank_average(cleaned_data, identify_blanks(cleaned_data, blank_row, blank_col), blank_row, blank_col))
+print(calculate_blank_average(cleaned_data, blank_row, blank_col))
 
 
 # Subtract absorbance of blanks from sample absorbance

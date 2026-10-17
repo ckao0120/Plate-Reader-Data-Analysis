@@ -154,7 +154,78 @@ def calculate_blank_average(df, rows, columns):
 
     return averages
 
+print("Average of blanks: ")
 print(calculate_blank_average(cleaned_data, blank_row, blank_col))
+blank_average = calculate_blank_average(cleaned_data, blank_row, blank_col)
 
 
 # Subtract absorbance of blanks from sample absorbance
+#def normalise_abs(df, blanks, rows, columns):
+    # Dictionary that stores normalised data
+    #normalised_samples = {}
+
+    # Subset replicates for each sample
+    #for col in columns:
+    #    wells = []
+    #    for row in rows:
+    #        col_ID = str(f"{col:02d}")
+    #        well = row + col_ID
+    #        wells.append(well)
+
+    #    sample = df.loc[wells]
+
+        # Select correct blank absorbance data
+    #    blank_abs = blanks[col_ID]
+
+        # Subtract absorbance of blank from absorbance of samples
+    #    normalised_sample = sample.sub(blank_abs, axis="columns").to_dict()
+
+        # Append normalised data to dictionary
+    #    normalised_samples[col_ID] = normalised_sample
+
+    # Get dataframe containing normalised absorbance of samples
+    #normalised_df = pd.DataFrame(normalised_samples)
+    
+    #return normalised_samples
+
+def normalise_abs(df, blanks, rows, columns):
+    # List to store row dictionaries
+    records = []
+
+    # Subset replicates for each sample
+    for col in columns:
+        col_ID = str(f"{col:02d}")
+
+        # Select correct blank absorbance data
+        blank_abs = pd.Series(blanks[col_ID])
+
+        for row in rows:
+            well = row + col_ID
+
+            # Check if well exists in df to avoid KeyError
+            if well in df.index:
+                sample_row = df.loc[well]
+
+                # Subtract absorbance of blank from absorbance of samples
+                normalised_row = sample_row - blank_abs
+
+                # Create a record dictionary
+                # Start with identifier columns
+                record = {
+                    "Well": well,
+                    "Column": col_ID,
+                }
+
+                # Add time point data to record
+                record.update(normalised_row.to_dict())
+
+                # Add dictionary containing row info to list containing all info
+                records.append(record)
+                
+    # Create the dataframe from list of records
+    normalised_df = pd.DataFrame(records)
+    
+    return normalised_df
+
+print("Normalised data: ")
+print(normalise_abs(cleaned_data, blank_average, sample_row, sample_col))

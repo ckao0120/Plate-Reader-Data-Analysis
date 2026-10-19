@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas.api.types import is_string_dtype
 from pandas.api.types import is_numeric_dtype
+import plotly.express as px
 import sys
 
 #####
@@ -212,8 +213,8 @@ def normalise_abs(df, blanks, rows, columns):
                 # Create a record dictionary
                 # Start with identifier columns
                 record = {
-                    "Well": well,
                     "Column": col_ID,
+                    "Well": well,
                 }
 
                 # Add time point data to record
@@ -228,4 +229,29 @@ def normalise_abs(df, blanks, rows, columns):
     return normalised_df
 
 print("Normalised data: ")
-print(normalise_abs(cleaned_data, blank_average, sample_row, sample_col))
+normalised_data = normalise_abs(cleaned_data, blank_average, sample_row, sample_col)
+print(normalised_data)
+
+
+# Reorganise data so it's easier to plot
+df_long = normalised_data.melt(id_vars=["Column", "Well"], var_name="Time", value_name="Absorbance")
+
+# Remove hour from Time for better sorting
+df_long["Time"] = df_long["Time"].str.extract("(\d+)").astype(int)
+print(df_long)
+
+# New dataframe with Mean and StDev of each sample at each time point
+df_agg = df_long.groupby(["Column", "Time"]).agg(Mean=("Absorbance", "mean"), Stdev=("Absorbance", "std")).reset_index()
+
+# Fill Nan Stdev with 0 if replicate is 1
+df_agg["Stdev"] = df_agg["Stdev"].fillna(0)
+print(df_agg)
+
+# Plot absorbance data as a line graph
+fig = px.line(df_agg, 
+              x="Time", 
+              y="Mean", 
+              color="Column",  
+              markers=True
+              )
+fig.show()

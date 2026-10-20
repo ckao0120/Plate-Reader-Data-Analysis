@@ -19,6 +19,19 @@ blank_row = ["E", "F", "G"]
 # Columns with blanks
 blank_col = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
+# Parameter tested
+testing_parameter = "Media"
+tested = {"02": "M9YE", 
+          "03": "M9YEOA",
+          "04": "M9YE-TPGS",
+          "05": "M9YEOA-TPGS",
+          "06": "M9YEOA(5mM)",
+          "07": "M9YEOA(5mM,1%)",
+          "08": "M9YEOA(5mM)-TPGS",
+          "09": "M9-TPGS",
+          "10": "M9",
+          "11": "M9OA"}
+
 ######
 
 # Read the entire file into a DataFrame
@@ -251,7 +264,19 @@ print(df_agg)
 fig = px.line(df_agg, 
               x="Time", 
               y="Mean", 
+              error_y="Stdev",
               color="Column",  
-              markers=True
+              markers=True,
+              labels={
+                  "Time": "Time (h)",
+                  "Mean": "Absorbance",
+                  "Column": testing_parameter,
+              }
               )
+
+# Update label names to the tested parameter
+fig.for_each_trace(lambda t: t.update(name = tested[t.name],
+                                      legendgroup = tested[t.name],
+                                      hovertemplate = t.hovertemplate.replace(t.name, tested[t.name])))
+
 fig.show()

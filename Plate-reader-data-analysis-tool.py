@@ -279,6 +279,38 @@ fig.for_each_trace(lambda t: t.update(name = tested[t.name],
                                       legendgroup = tested[t.name],
                                       hovertemplate = t.hovertemplate.replace(t.name, tested[t.name])))
 
+# Update figure layout
+fig.update_layout(
+    font_family="Arial",
+    plot_bgcolor="rgba(0, 0, 0, 0)", # Set background to transparent
+    paper_bgcolor="rgba(0, 0, 0, 0)", # Set background to transparent
+)
+
+fig.update_xaxes(
+    range=[0, 6.5],
+    tick0=0,
+    dtick=1,
+    ticks="outside",
+    tickwidth=2,
+    showgrid=False,
+    showline=True,
+    linewidth=2,
+    linecolor="black",
+    mirror=True,
+)
+fig.update_yaxes(
+    range=[-0.3, 0.4],
+    tick0=-0.3,
+    dtick=0.1,
+    ticks="outside",
+    tickwidth=2,
+    showgrid=False,
+    showline=True,
+    linewidth=2,
+    linecolor="black",
+    mirror=True,
+)
+
 # Display plot in browser
 fig.show()
 

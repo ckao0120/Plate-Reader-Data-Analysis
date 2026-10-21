@@ -279,4 +279,8 @@ fig.for_each_trace(lambda t: t.update(name = tested[t.name],
                                       legendgroup = tested[t.name],
                                       hovertemplate = t.hovertemplate.replace(t.name, tested[t.name])))
 
+# Display plot in browser
 fig.show()
+
+# Save plot as static image
+fig.write_image("Analysed_data.png")

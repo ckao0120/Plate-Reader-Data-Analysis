@@ -105,23 +105,6 @@ def correct_dtype(df):
 cleaned_data = correct_dtype(cleaned_data)
 
 
-# Check that Group column has sensible Group IDs
-#def check_GroupID(df):
-#    IDs = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
-#          "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-#          "U", "V", "X", "Y", "Z"]
-
-#    sample_IDs = df["Group"].values.tolist()
-
-#    for i in range(len(sample_IDs)):
-#        if df.iat[i, 0] not in IDs:
-#            df.iat[i, 0] = np.nan
-
-#    return df 
-            
-# cleaned_data = check_GroupID(cleaned_data)
-
-
 # Check if all cells in DataFrame contain data (it should)
 def check_missing_data(df):
     col_to_check = df.columns.tolist()
@@ -169,34 +152,6 @@ blank_average = calculate_blank_average(cleaned_data, blank_row, blank_col)
 
 
 # Subtract absorbance of blanks from sample absorbance
-#def normalise_abs(df, blanks, rows, columns):
-    # Dictionary that stores normalised data
-    #normalised_samples = {}
-
-    # Subset replicates for each sample
-    #for col in columns:
-    #    wells = []
-    #    for row in rows:
-    #        col_ID = str(f"{col:02d}")
-    #        well = row + col_ID
-    #        wells.append(well)
-
-    #    sample = df.loc[wells]
-
-        # Select correct blank absorbance data
-    #    blank_abs = blanks[col_ID]
-
-        # Subtract absorbance of blank from absorbance of samples
-    #    normalised_sample = sample.sub(blank_abs, axis="columns").to_dict()
-
-        # Append normalised data to dictionary
-    #    normalised_samples[col_ID] = normalised_sample
-
-    # Get dataframe containing normalised absorbance of samples
-    #normalised_df = pd.DataFrame(normalised_samples)
-    
-    #return normalised_samples
-
 def normalise_abs(df, blanks, rows, columns):
     # List to store row dictionaries
     records = []
@@ -236,8 +191,8 @@ def normalise_abs(df, blanks, rows, columns):
     
     return normalised_df
 
-print("Normalised data: ")
 normalised_data = normalise_abs(cleaned_data, blank_average, sample_row, sample_col)
+print("Normalised data: ")
 print(normalised_data)
 
 

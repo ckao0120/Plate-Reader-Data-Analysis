@@ -43,7 +43,7 @@ absorbance_data = all_data.iloc[12:]
 
 # Check data has been imported correctly
 #print(metadata)
-print(absorbance_data.head())
+#print(absorbance_data.head())
 
 # Rename columns to row 1 of absorbance_data
 absorbance_data.columns = absorbance_data.iloc[0]
@@ -52,23 +52,19 @@ absorbance_data = absorbance_data[1:]
 absorbance_data.iat[0, 0] = "Well"
 absorbance_data.iat[0, 2] = "Group"
 
-print(absorbance_data.head())
-
 # Rename rows to column 1
 absorbance_data.set_index("Well", inplace=True)
-
-print(absorbance_data.head())
 
 # Delete Blank corrected raw data as it was calculated 
 # based on the absorbance of the peripheral water
 cleaned_data = absorbance_data.drop(columns = ["Group", "Blank corrected based on Raw Data (600)", "Content"])
-#print(cleaned_data.head())
 
 # Rename column names to row 1 (containing time)
 cleaned_data.columns = cleaned_data.iloc[0]
 cleaned_data = cleaned_data[1:]
 
-print(cleaned_data.head())
+# Check cleaned data looks okay
+#print(cleaned_data.head())
 
 # Delete absorbance of peripheral water blanks
 # Define wells of peripheral water blanks
@@ -86,7 +82,6 @@ def identify_peripheral_water():
                 water_wells.append(well)
     return water_wells
 
-#print(identify_peripheral_water())
 peripheral_water = identify_peripheral_water()
 
 cleaned_data = cleaned_data.drop(index = peripheral_water)
@@ -142,7 +137,8 @@ def check_missing_data(df):
 
 check_missing_data(cleaned_data)
 
-print(cleaned_data.head())
+# Check sample data (no peripheral water) look okay
+#print(cleaned_data.head())
 
 
 # Calculate average of the absorbance values of blanks
@@ -168,8 +164,7 @@ def calculate_blank_average(df, rows, columns):
 
     return averages
 
-print("Average of blanks: ")
-print(calculate_blank_average(cleaned_data, blank_row, blank_col))
+
 blank_average = calculate_blank_average(cleaned_data, blank_row, blank_col)
 
 
@@ -251,14 +246,12 @@ df_long = normalised_data.melt(id_vars=["Column", "Well"], var_name="Time", valu
 
 # Remove hour from Time for better sorting
 df_long["Time"] = df_long["Time"].str.extract("(\d+)").astype(int)
-print(df_long)
 
 # New dataframe with Mean and StDev of each sample at each time point
 df_agg = df_long.groupby(["Column", "Time"]).agg(Mean=("Absorbance", "mean"), Stdev=("Absorbance", "std")).reset_index()
 
 # Fill Nan Stdev with 0 if replicate is 1
 df_agg["Stdev"] = df_agg["Stdev"].fillna(0)
-print(df_agg)
 
 # Plot absorbance data as a line graph
 fig = px.line(df_agg, 
